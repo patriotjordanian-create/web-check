@@ -23,7 +23,7 @@ if (trustProxy) {
   app.set('trust proxy', parsed);
 }
 
-const __filename = new URL(import.meta.url).pathname;
+const __filename = new URL(import.meta.url).pathname.replace(/^\/([A-Z]:)/, '$1');
 const __dirname = path.dirname(__filename);
 
 const port = process.env.PORT || 3000; // The port to run the server on
