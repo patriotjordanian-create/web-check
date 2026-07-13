@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -23,7 +24,7 @@ if (trustProxy) {
   app.set('trust proxy', parsed);
 }
 
-const __filename = new URL(import.meta.url).pathname.replace(/^\/([A-Z]:)/, '$1');
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const port = process.env.PORT || 3000; // The port to run the server on
@@ -78,9 +79,9 @@ fs.readdirSync(dirPath, { withFileTypes: true })
   .forEach(async (dirent) => {
     const routeName = dirent.name.split('.')[0];
     const route = `${API_DIR}/${routeName}`;
-    // const handler = require(path.join(dirPath, dirent.name));
 
-    const handlerModule = await import(path.join(dirPath, dirent.name));
+    const handlerPath = path.join(dirPath, dirent.name);
+    const handlerModule = await import(pathToFileURL(handlerPath).href);
     const handler = handlerModule.default || handlerModule;
     handlers[route] = handler;
 
@@ -184,7 +185,7 @@ if (process.env.DISABLE_GUI && process.env.DISABLE_GUI !== 'false') {
   app.use(express.static('dist/client/'));
   app.use(async (req, res, next) => {
     const ssrHandlerPath = path.join(__dirname, 'dist', 'server', 'entry.mjs');
-    import(ssrHandlerPath)
+    import(pathToFileURL(ssrHandlerPath).href)
       .then(({ handler: ssrHandler }) => {
         ssrHandler(req, res, next);
       })
