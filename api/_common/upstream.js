@@ -11,8 +11,13 @@ export const upstreamError = (error, context = 'Lookup') => {
   return { error: `${context} failed: ${error.message}` };
 };
 
-// Read a required env var, or return a skipped envelope if missing
+// Placeholder values copied from example configs must not be sent upstream as real keys
+const PLACEHOLDER_VALUE = /^(your[_-][a-z_-]+|change[_-]?me|placeholder|todo|none|x{3,}|<[^>]*>)$/i;
+
+// Read a required env var, or return a skipped envelope if missing or a placeholder
 export const requireEnv = (envVar, service) => {
   const v = process.env[envVar];
-  return v ? { value: v } : { skipped: `${service} requires ${envVar} to be set` };
+  return v && !PLACEHOLDER_VALUE.test(v.trim())
+    ? { value: v }
+    : { skipped: `${service} requires ${envVar} to be set` };
 };

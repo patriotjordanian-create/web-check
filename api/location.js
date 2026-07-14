@@ -128,6 +128,7 @@ const enrichCountry = async (code) => {
     const data = await getJson(
       `https://restcountries.com/v3.1/alpha/${code}` +
         '?fields=tld,languages,currencies,area,population',
+      AbortSignal.timeout(TIMEOUT),
     );
     const c = Array.isArray(data) ? data[0] : data;
     if (!c) {
