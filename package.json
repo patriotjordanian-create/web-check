@@ -21,6 +21,7 @@
     "hold-my-beer": "yarn format:fix && yarn lint && yarn typecheck"
   },
   "dependencies": {
+    "@anthropic-ai/aws-sdk": "^0.6.0",
     "@astrojs/check": "^0.9.9",
     "@astrojs/react": "^5.0.4",
     "@emotion/react": "^11.14.0",
